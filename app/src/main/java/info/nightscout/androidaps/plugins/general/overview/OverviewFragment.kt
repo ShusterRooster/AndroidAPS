@@ -64,6 +64,7 @@ import info.nightscout.androidaps.utils.wizard.QuickWizard
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.overview_buttons_layout.*
 import kotlinx.android.synthetic.main.overview_fragment.overview_notifications
 import kotlinx.android.synthetic.main.overview_fragment_nsclient.*
@@ -163,20 +164,36 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         overview_bggraph?.gridLabelRenderer?.labelVerticalWidth = axisWidth
         overview_bggraph?.layoutParams?.height = resourceHelper.dpToPx(skinProvider.activeSkin().mainGraphHeight)
 
+        // register tap on series callback
+
         carbAnimation = overview_carbs_icon?.background as AnimationDrawable?
         carbAnimation?.setEnterFadeDuration(1200)
         carbAnimation?.setExitFadeDuration(1200)
 
         rangeToDisplay = sp.getInt(R.string.key_rangetodisplay, 6)
 
-        overview_bggraph?.setOnLongClickListener {
-            rangeToDisplay += 6
-            rangeToDisplay = if (rangeToDisplay > 24) 6 else rangeToDisplay
-            sp.putInt(R.string.key_rangetodisplay, rangeToDisplay)
-            updateGUI("rangeChange")
-            sp.putBoolean(R.string.key_objectiveusescale, true)
-            false
+        // overview_bggraph?.setOnLongClickListener {
+        //     rangeToDisplay += 6
+        //     rangeToDisplay = if (rangeToDisplay > 24) 6 else rangeToDisplay
+        //     sp.putInt(R.string.key_rangetodisplay, rangeToDisplay)
+        //     updateGUI("rangeChange")
+        //     sp.putBoolean(R.string.key_objectiveusescale, true)
+        //     false
+        // }
+
+        overview_bggraph?.setOnClickListener() {
+            overview_bggraph.viewport.isScalable = true
+            overview_bggraph.viewport.isScrollable = true
+
+            // try{
+            //     main_pager.isUserInputEnabled = false
+            // }
+            // catch (e: Exception){
+            //     Toast.makeText(context, "null idk", Toast.LENGTH_SHORT).show()
+            // }
+
         }
+
         prepareGraphsIfNeeded(overviewMenus.setting.size)
         overviewMenus.setupChartMenu(overview_chartMenuButton)
 
@@ -460,7 +477,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         overview_carbsbutton?.visibility = ((!activePlugin.activePump.pumpDescription.storesCarbInfo || pump.isInitialized && !pump.isSuspended) && profile != null && sp.getBoolean(R.string.key_show_carbs_button, true)).toVisibility()
         overview_treatmentbutton?.visibility = (pump.isInitialized && !pump.isSuspended && profile != null && sp.getBoolean(R.string.key_show_treatment_button, false)).toVisibility()
         overview_wizardbutton?.visibility = (pump.isInitialized && !pump.isSuspended && profile != null && sp.getBoolean(R.string.key_show_wizard_button, true)).toVisibility()
-        overview_insulinbutton?.visibility = (pump.isInitialized && !pump.isSuspended && profile != null && sp.getBoolean(R.string.key_show_insulin_button, true)).toVisibility()
+        overview_insulinbutton?.visibility = (pump.isInitialized && pump.isSuspended && profile != null && sp.getBoolean(R.string.key_show_insulin_button, true)).toVisibility()
 
         // **** Calibration & CGM buttons ****
         val xDripIsBgSource = xdripPlugin.isEnabled(PluginType.BGSOURCE)

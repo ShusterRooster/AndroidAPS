@@ -21,8 +21,8 @@ import info.nightscout.androidaps.db.TempTarget
 import info.nightscout.androidaps.interfaces.ActivePluginProvider
 import info.nightscout.androidaps.interfaces.CommandQueueProvider
 import info.nightscout.androidaps.interfaces.Constraint
-import info.nightscout.androidaps.plugins.configBuilder.ConstraintChecker
 import info.nightscout.androidaps.interfaces.ProfileFunction
+import info.nightscout.androidaps.plugins.configBuilder.ConstraintChecker
 import info.nightscout.androidaps.queue.Callback
 import info.nightscout.androidaps.utils.*
 import info.nightscout.androidaps.utils.alertDialogs.OKDialog
@@ -90,11 +90,18 @@ class InsulinDialog : DialogFragmentWithDate() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val pump = activePlugin.activePump
 
         if (config.NSCLIENT) {
             overview_insulin_record_only.isChecked = true
             overview_insulin_record_only.isEnabled = false
         }
+
+        if(pump.isSuspended){
+            overview_insulin_record_only.isChecked = true
+            overview_insulin_record_only.visibility = View.GONE
+        }
+        
         val maxInsulin = constraintChecker.getMaxBolusAllowed().value()
 
         overview_insulin_time.setParams(savedInstanceState?.getDouble("overview_insulin_time")
