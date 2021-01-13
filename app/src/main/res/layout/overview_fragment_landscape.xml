@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".plugins.general.overview.OverviewFragment">
 
-    <ScrollView
+    <info.nightscout.androidaps.CustomScrollView
         android:id="@+id/overview_toppart_scrollbar"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -35,6 +35,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </info.nightscout.androidaps.CustomScrollView>
 
 </LinearLayout>

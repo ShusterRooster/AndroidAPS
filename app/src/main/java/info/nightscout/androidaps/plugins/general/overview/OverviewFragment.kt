@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.text.toSpanned
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,7 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerFragment
 import info.nightscout.androidaps.Config
 import info.nightscout.androidaps.Constants
+import info.nightscout.androidaps.MainActivity
 import info.nightscout.androidaps.R
 import info.nightscout.androidaps.data.Profile
 import info.nightscout.androidaps.dialogs.*
@@ -66,8 +68,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.overview_buttons_layout.*
+import kotlinx.android.synthetic.main.overview_fragment.*
 import kotlinx.android.synthetic.main.overview_fragment.overview_notifications
 import kotlinx.android.synthetic.main.overview_fragment_nsclient.*
+import kotlinx.android.synthetic.main.overview_fragment_nsclient.overview_toppart_scrollbar
 import kotlinx.android.synthetic.main.overview_graphs_layout.*
 import kotlinx.android.synthetic.main.overview_info_layout.*
 import kotlinx.android.synthetic.main.overview_loop_pumpstatus_layout.*
@@ -129,6 +133,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
     private val secondaryGraphsLabel = ArrayList<TextView>()
 
     private var carbAnimation: AnimationDrawable? = null
+    private lateinit var mainActivity: MainActivity
 
     private val graphLock = Object()
 
@@ -181,18 +186,22 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         //     false
         // }
 
-        overview_bggraph?.setOnClickListener() {
+        overview_bggraph?.setOnLongClickListener() {
             overview_bggraph.viewport.isScalable = true
             overview_bggraph.viewport.isScrollable = true
+            overview_bggraph.isNestedScrollingEnabled = true
+            //main_pager.isUserInputEnabled = false <--- this one does not work :(
 
-            // try{
-            //     main_pager.isUserInputEnabled = false
-            // }
-            // catch (e: Exception){
-            //     Toast.makeText(context, "null idk", Toast.LENGTH_SHORT).show()
-            // }
-
+            overview_toppart_scrollbar.isEnableScrolling = false
+            Toast.makeText(context, "graph selected", Toast.LENGTH_SHORT).show()
+            false
         }
+
+
+        // overview_bggraph.viewport.isScalable = false
+        // overview_bggraph.viewport.isScrollable = false
+        // overview_toppart_scrollbar.isEnableScrolling = true
+
 
         prepareGraphsIfNeeded(overviewMenus.setting.size)
         overviewMenus.setupChartMenu(overview_chartMenuButton)

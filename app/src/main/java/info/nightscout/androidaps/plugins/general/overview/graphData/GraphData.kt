@@ -53,7 +53,6 @@ class GraphData(
     private var bgReadingsArray: List<BgReading>? = null
     private val units: String
     private val series: MutableList<Series<*>> = ArrayList()
-    public val filteredTreatments: MutableList<DataPointWithLabelInterface> = ArrayList()
 
     init {
         injector.androidInjector().inject(this)
@@ -233,7 +232,7 @@ class GraphData(
     }
 
     fun addTreatments(fromTime: Long, endTime: Long) {
-        // val filteredTreatments: MutableList<DataPointWithLabelInterface> = ArrayList()
+        val filteredTreatments: MutableList<DataPointWithLabelInterface> = ArrayList()
         val treatments = treatmentsPlugin.treatmentsFromHistory
         for (tx in treatments.indices) {
             val t = treatments[tx]
@@ -600,8 +599,6 @@ class GraphData(
         graph.viewport.setMaxY(Round.ceilTo(maxY, step))
         graph.viewport.setMinY(Round.floorTo(minY, step))
         graph.viewport.isYAxisBoundsManual = true
-        graph.viewport.isScrollable = true
-        graph.viewport.isScalable = true
 
         // draw it
         graph.onDataChanged(false, false)
