@@ -25,7 +25,7 @@ class HardLimits @Inject constructor(
     val ADULT = 2
     val RESISTANTADULT = 3
     val PREGNANT = 4
-    val MAXBOLUS = doubleArrayOf(5.0, 10.0, 17.0, 25.0, 60.0)
+    val MAXBOLUS = doubleArrayOf(5.0, 10.0, 25.0, 25.0, 60.0)
 
     // Very Hard Limits Ranges
     // First value is the Lowest and second value is the Highest a Limit can define
