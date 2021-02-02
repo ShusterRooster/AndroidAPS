@@ -175,7 +175,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         carbAnimation?.setEnterFadeDuration(1200)
         carbAnimation?.setExitFadeDuration(1200)
 
-        rangeToDisplay = sp.getInt(R.string.key_rangetodisplay, 6)
+        //rangeToDisplay = sp.getInt(R.string.key_rangetodisplay, 6)
 
         // overview_bggraph?.setOnLongClickListener {
         //     rangeToDisplay += 6
@@ -189,18 +189,29 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         overview_bggraph?.setOnLongClickListener() {
             overview_bggraph.viewport.isScalable = true
             overview_bggraph.viewport.isScrollable = true
-            overview_bggraph.isNestedScrollingEnabled = true
-            //main_pager.isUserInputEnabled = false <--- this one does not work :(
-
+            overview_bggraph.isHorizontalScrollBarEnabled = true
             overview_toppart_scrollbar.isEnableScrolling = false
-            Toast.makeText(context, "graph selected", Toast.LENGTH_SHORT).show()
+
+            //rangeToDisplay = overview_bggraph.measuredWidth/240
+
+            //sp.putInt(R.string.key_rangetodisplay, rangeToDisplay)
+            activity?.main_pager?.isUserInputEnabled = false
+
+            sp.putBoolean(R.string.key_objectiveusescale, true)
+
+            Toast.makeText(context, rangeToDisplay.toString(), Toast.LENGTH_SHORT).show()
             false
         }
 
+        //updateGUI("rangeChange")
 
-        // overview_bggraph.viewport.isScalable = false
-        // overview_bggraph.viewport.isScrollable = false
-        // overview_toppart_scrollbar.isEnableScrolling = true
+        // overview_layout.setOnTouchListener(object : View.OnTouchListener {
+        //     override fun onTouch(v: View, m: MotionEvent): Boolean {
+        //         m.
+        //         return true
+        //     }
+        // })
+
 
 
         prepareGraphsIfNeeded(overviewMenus.setting.size)
@@ -845,20 +856,25 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                 val toTime: Long
                 val fromTime: Long
                 val endTime: Long
+                var predictionHours: Int
                 val apsResult = if (config.APS) lastRun?.constraintsProcessed else NSDeviceStatus.getAPSResult(injector)
                 if (predictionsAvailable && apsResult != null && menuChartSettings[0][OverviewMenus.CharType.PRE.ordinal]) {
-                    var predictionHours = (ceil(apsResult.latestPredictionsTime - System.currentTimeMillis().toDouble()) / (60 * 60 * 1000)).toInt()
+                    predictionHours = (ceil(apsResult.latestPredictionsTime - System.currentTimeMillis().toDouble()) / (60 * 60 * 1000)).toInt()
                     predictionHours = min(2, predictionHours)
                     predictionHours = max(0, predictionHours)
-                    hoursToFetch = rangeToDisplay - predictionHours
+                    hoursToFetch = 24 - predictionHours
                     toTime = calendar.timeInMillis + 100000 // little bit more to avoid wrong rounding - GraphView specific
                     fromTime = toTime - T.hours(hoursToFetch.toLong()).msecs()
                     endTime = toTime + T.hours(predictionHours.toLong()).msecs()
+
+                    graphData.formatAxis(toTime - T.hours((rangeToDisplay-predictionHours).toLong()).msecs(), endTime)
                 } else {
-                    hoursToFetch = rangeToDisplay
+                    predictionHours = 0
+                    hoursToFetch = 24
                     toTime = calendar.timeInMillis + 100000 // little bit more to avoid wrong rounding - GraphView specific
                     fromTime = toTime - T.hours(hoursToFetch.toLong()).msecs()
                     endTime = toTime
+                    graphData.formatAxis(toTime - T.hours(6.toLong()).msecs(), endTime)
                 }
                 val now = System.currentTimeMillis()
 
@@ -873,7 +889,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                 else graphData.addBgReadings(fromTime, toTime, lowLine, highLine, null)
 
                 // set manual x bounds to have nice steps
-                graphData.formatAxis(fromTime, endTime)
+                //graphData.formatAxis(fromTime, endTime)
 
                 // Treatments
                 graphData.addTreatments(fromTime, endTime)

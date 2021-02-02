@@ -601,6 +601,6 @@ class GraphData(
         graph.viewport.isYAxisBoundsManual = true
 
         // draw it
-        graph.onDataChanged(false, false)
+        graph.onDataChanged(true, true)
     }
 }
