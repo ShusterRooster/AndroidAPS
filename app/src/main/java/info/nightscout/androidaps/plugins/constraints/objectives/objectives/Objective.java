@@ -179,9 +179,9 @@ public abstract class Objective {
             int days = (int) Math.floor((double) duration / T.days(1).msecs());
             int hours = (int) Math.floor((double) duration / T.hours(1).msecs());
             int minutes = (int) Math.floor((double) duration / T.mins(1).msecs());
-            if (days > 0) return resourceHelper.gq(R.plurals.objective_days, days, days);
-            else if (hours > 0) return resourceHelper.gq(R.plurals.objective_hours, hours, hours);
-            else return resourceHelper.gq(R.plurals.objective_minutes, minutes, minutes);
+            if (days > 0) return resourceHelper.gq(R.plurals.days, days, days);
+            else if (hours > 0) return resourceHelper.gq(R.plurals.hours, hours, hours);
+            else return resourceHelper.gq(R.plurals.minutes, minutes, minutes);
         }
     }
 
